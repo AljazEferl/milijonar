@@ -43,16 +43,15 @@ class RegisterActivity : AppCompatActivity() {
                 editor.apply()
                 finish()
             }
-            //get email and password from the user
             permormSignup()
         }
     }
     private fun permormSignup() {
-        val email = findViewById<EditText>(R.id.editText_email_register)
-        val password = findViewById<EditText>(R.id.editText_password_register)
+        val email = findViewById<EditText>(R.id.et_email_input)
+        val password = findViewById<EditText>(R.id.et_password_input)
 
         if(email.text.isEmpty() || password.text.isEmpty()){
-            Toast.makeText(this,"Izpolnite vsa vnosna polja", Toast.LENGTH_SHORT)
+            Toast.makeText(this,"Izpolnite vsa vnosna polja!", Toast.LENGTH_SHORT)
                 .show()
             return
         }
@@ -80,6 +79,4 @@ class RegisterActivity : AppCompatActivity() {
                     .show()
             }
     }
-
-
 }
