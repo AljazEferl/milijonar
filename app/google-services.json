@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "550731232466",
+    "project_id": "milijonar-4b380",
+    "storage_bucket": "milijonar-4b380.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550731232466:android:fa3f6a8f36e2c61ad4690b",
+        "android_client_info": {
+          "package_name": "com.example.projektnodelomilijonar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550731232466-sos8r1mbiugc6lk1k45gjea5ln3gttuc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcHRrjZf-T0IYMZ27hqF1P7JqEk8LgByw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550731232466-sos8r1mbiugc6lk1k45gjea5ln3gttuc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
