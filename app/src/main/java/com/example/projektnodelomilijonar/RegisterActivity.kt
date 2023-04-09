@@ -1,82 +1,95 @@
 package com.example.projektnodelomilijonar
 
-import android.content.Context
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.projektnodelomilijonar.databinding.ActivityRegisterBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import java.sql.*
+
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
-    private lateinit var auth: FirebaseAuth
-
-    private val sharedPreferences by lazy {
-        getSharedPreferences("prefs", Context.MODE_PRIVATE)
-    }
+    private var conn: Connection? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Firebase Auth
-        auth = Firebase.auth
-
-        val loginText: TextView = binding.twLogin
-        loginText.setOnClickListener(){
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
-        binding.btnRegister.setOnClickListener(){
-            //if user is Login it will be Logouted
-            val isLoggedIn = sharedPreferences.getBoolean("isLogIn", false)
-            if (isLoggedIn) {
-                val editor = sharedPreferences.edit()
-                editor.putBoolean("isLogIn", false)
-                editor.apply()
-                finish()
-            }
-            permormSignup()
-        }
+        getConnection()
+        //executeMySQLQuery()
     }
-    private fun permormSignup() {
-        val email = findViewById<EditText>(R.id.et_email_input)
-        val password = findViewById<EditText>(R.id.et_password_input)
 
-        if(email.text.isEmpty() || password.text.isEmpty()){
-            Toast.makeText(this,"Izpolnite vsa vnosna polja!", Toast.LENGTH_SHORT)
-                .show()
-            return
-        }
+    private fun getConnection() {
+        val url = "jdbc:mysql://sql303.epizy.com:3306/epiz_33963503_milijonar"
+        val username = "epiz_33963503"
+        val password = "0XYpGgygXZVRG"
 
-        val inputEmail = email.text.toString()
-        val inputPassword = password.text.toString()
+        var conn: Connection? = null
 
-        auth.createUserWithEmailAndPassword(inputEmail, inputPassword)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, let move to the next activity i.e InputActivity
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
+        try {
+            // Load the JDBC-ODBC bridge driver
+            Class.forName("com.mysql.cj.jdbc.Driver")
 
-                    Toast.makeText(baseContext, "Registrirani ste, zdaj se lahko prijavite!",
-                        Toast.LENGTH_SHORT).show()
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Toast.makeText(baseContext, "Preverjanje ni uspelo!",
-                        Toast.LENGTH_SHORT).show()
+            // Establish the database connection
+            conn = DriverManager.getConnection(url, username, password)
+
+            // Print a message to indicate success
+            binding.textView3.text = "Connected to the database."
+
+            // Perform database operations here...
+            // For example:
+            // val stmt = conn.createStatement()
+            // val rs = stmt.executeQuery("SELECT * FROM mytable")
+            // while (rs.next()) {
+            //     println(rs.getString("column_name"))
+            // }
+
+        } catch (ex: ClassNotFoundException) {
+            // Handle driver loading errors
+            binding.textView3.text = "Error: could not load JDBC-ODBC bridge driver"
+            ex.printStackTrace()
+        } catch (ex: SQLException) {
+            // Handle database connection errors
+            binding.textView3.text = "Error: could not connect to the database"
+            ex.printStackTrace()
+        } finally {
+            // Close the database connection (if it was established)
+            if (conn != null) {
+                try {
+                    conn.close()
+                    println("Disconnected from the database.")
+                } catch (ex: SQLException) {
+                    println("Error: could not disconnect from the database")
+                    ex.printStackTrace()
                 }
             }
-            .addOnFailureListener(){
-                Toast.makeText(this,"Zaznana napaka ${it.localizedMessage}",Toast.LENGTH_SHORT)
-                    .show()
+        }
+    }
+
+    private fun executeMySQLQuery() {
+        var stmt: Statement? = null
+        var resultset: ResultSet? = null
+
+        try {
+            stmt = conn!!.createStatement()
+            resultset = stmt!!.executeQuery("SELECT * FROM my_table")
+
+            while (resultset.next()) {
+                val id = resultset.getInt("id")
+                val name = resultset.getString("name")
+                val age = resultset.getInt("age")
+
+                println("id: $id, name: $name, age: $age")
             }
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            // release resources
+            resultset?.close()
+            stmt?.close()
+            conn?.close()
+        }
     }
 }
